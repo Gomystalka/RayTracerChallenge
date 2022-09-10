@@ -184,6 +184,9 @@ namespace RayTracer.Drawing
         public static Color Blend(Color color1, Color color2)
             => color1 * color2;
 
+        public string ToByteString()
+           => $"[R:{RedByte}, G:{GreenByte}, B:{BlueByte}]";
+
         public override int GetHashCode()
             => red.GetHashCode() ^ green.GetHashCode() ^ blue.GetHashCode();
 
@@ -197,11 +200,50 @@ namespace RayTracer.Drawing
             yield return EnumerateAsType == EnumerationType.Float ? blue : BlueByteClamped;
         }
 
-        //public static Color FromHSV(float h, float s, float v) {
-        //    //float M = 255f * v;
-        //    //float m = (1f - s) * M;
-        //    //float z = (M - m) 
-        //}
+        /// <summary>
+        /// Converts a HSV value to RGB.
+        /// </summary>
+        /// <param name="h">The <b>Hue</b> value. [Range 0 - 360]</param>
+        /// <param name="s">The <b>Saturation</b> value. [Range 0 - 1]</param>
+        /// <param name="v">The <b>Value</b>. [Range 0 - 1]</param>
+        /// <returns></returns>
+        public static Color FromHSV(float h, float s, float v)
+        {
+            float r = 0, g = 0, b = 0;
+
+            float hc = h / 60f;
+            float c = v * s;
+            float x = c * (1f - MathF.Abs((hc % 2f) - 1f));
+
+            if (hc >= 0f && hc < 1f) {
+                r = c;
+                g = x;
+            }
+            else if(hc >= 1f && hc < 2f)
+            {
+                r = x;
+                g = c;
+            }
+            else if(hc >= 2f && hc < 3f) {
+                g = c;
+                b = x;
+            }
+            else if(hc >= 3f && hc < 4f) {
+                g = x;
+                b = c;
+            }
+            else if(hc >= 4f && hc < 5f) {
+                r = x;
+                b = c;
+            }
+            else  {
+                r = c;
+                b = x;
+            }
+            float m = v - c;
+
+            return new Color(r + m, g + m, b + m);
+        }
 
         IEnumerator IEnumerable.GetEnumerator()
             => GetEnumerator();

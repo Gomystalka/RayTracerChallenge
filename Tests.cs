@@ -150,38 +150,8 @@ namespace RayTracer.UnitTesting.Tests
             return PPMWriter.CreatePPMHeader(10, 20) == correctHeader;
         }
 
-        [UnitTest(RunOnSeparateThread = true)]
+        [UnitTest()]
         public static bool TestPPMCreation() {
-            //Canvas c = new Canvas(5, 3);
-            //Color c1 = new Color(1.5f, 0f, 0f);
-            //Color c2 = new Color(0f, 0.5f, 0f);
-            //Color c3 = new Color(-0.5f, 0f, 1f);
-
-            //c.FillPixel(0, 0, c1);
-            //c.FillPixel(2, 1, c2);
-            //c.FillPixel(4, 2, c3);
-            //PPMWriter.Write(c.Pixels);
-
-            //Canvas c = new Canvas(300, 300);
-            //c.FillAllPixels(Color.White);
-
-            //float twoPi = (float)SysMath.PI * 2f;
-            //float theta = twoPi / 16f;
-            //int centerX = c.Width / 2;
-            //int centerY = c.Height / 2;
-            //float radius = 100f;
-            //int thickness = 20;
-
-            //for (float a = 0; a < twoPi * 2f; a += 0.001f) {
-
-            //    for (int i = 0; i < thickness; i++)
-            //    {
-            //        int x = (int)(centerX + MathF.Sin(a) * (radius + i));
-            //        int y = (int)(centerY - MathF.Cos(a) * (radius + i));
-            //        c.FillPixel(x, y, Color.Red);
-            //    }
-            //}
-
             Canvas c = new Canvas(10, 2);
             c.FillAllPixels(Color.Red);
             string ppm = PPMWriter.CreatePPMString(c.Pixels);
@@ -196,13 +166,13 @@ namespace RayTracer.UnitTesting.Tests
             return ppm == expected && ppm.EndsWith(nl);
         }
 
-        [UnitTest(RunOnSeparateThread = true)]
+        [UnitTest]
         public static bool TestProjectileDrawing() {
             Canvas c = new Canvas(800, 600);
             Projectile proj = new Projectile()
             {
                 position = Float4.Point(0f, 0.1f, 0f),
-                velocity = Float4.Vector(1f, 1.8f, 0f).Normalised * 9f
+                velocity = Float4.Vector(0.62f, 1.8f, 0f).Normalised * 10f
             };
             World world = new World()
             {
@@ -210,18 +180,20 @@ namespace RayTracer.UnitTesting.Tests
                 windVelocity = Float4.Vector(0.01f, 0f, 0f)
             };
 
-            int thickness = 4;
+            int thickness = 6;
+            float maxHeight = 300f;
 
             while (proj.position.y > 0)
             {
                 proj.Update(world);
-                int canvasRelativeY = (int)(c.Height - proj.position.y);
+                int canvasRelativeY = (int)(c.Height - proj.position.y) + 4;
 
                 for (int dx = -thickness; dx < thickness; dx++)
                 {
                     for (int dy = -thickness; dy < thickness; dy++)
                     {
-                        c.FillPixel(proj.position.x.RoundToInt() + dx, canvasRelativeY + dy, Color.Red);
+                        Color clr = Color.FromHSV((proj.position.y / maxHeight) * 360f, 1f, 1f);
+                        c.FillPixel(proj.position.x.RoundToInt() + dx, canvasRelativeY + dy, clr);
                     }
                 }
                 //Thread.Sleep(1);
@@ -230,6 +202,16 @@ namespace RayTracer.UnitTesting.Tests
             System.IO.File.WriteAllText("ProjectileTest.ppm", PPMWriter.CreatePPMString(c.Pixels));
 
             return true;
+        }
+
+        [UnitTest]
+        public static bool TestHSVToRGBConversion() {
+            float h = 20f;
+            float s = 1f;
+            float v = 1f;
+
+            Color c = Color.FromHSV(h, s, v);
+            return c == new Color(255, 85, 0);
         }
 
         [UnitTest(RunOnSeparateThread = true, Skip = true)]
