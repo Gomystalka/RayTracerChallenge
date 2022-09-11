@@ -4,18 +4,55 @@ using System.Text;
 
 using SysMath = System.Math;
 
-namespace RayTracer.Math
+namespace RayTracer.Maths
 {
     public struct Float4
     {
         public const float kEpsilon = 0.00001f;
+        public static Float4 Zero = new Float4(0, 0, 0, 0);
 
         public float x;
         public float y;
         public float z;
-        private float _w;
+        public float w;
 
-        public float Magnitude => MathF.Sqrt((x * x) + (y * y) + (z * z) + (_w * _w));
+        public float this[int index] {
+            get {
+                switch (index) {
+                    case 0:
+                        return x;
+                    case 1:
+                        return y;
+                    case 2:
+                        return z;
+                    case 3:
+                        return w;
+                    default: //Should probably throw OutOfBounds exception
+                        return 0;
+                }
+            }
+            set {
+                switch (index)
+                {
+                    case 0:
+                        x = value;
+                        break;
+                    case 1:
+                        y = value;
+                        break;
+                    case 2:
+                        z = value;
+                        break;
+                    case 3:
+                        w = value;
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
+
+        public float Magnitude => MathF.Sqrt((x * x) + (y * y) + (z * z) + (w * w));
         public Float4 Normalised
         {
             get
@@ -31,7 +68,7 @@ namespace RayTracer.Math
             x = f.x;
             y = f.y;
             z = f.y;
-            _w = f._w;
+            w = f.w;
         }
 
         public Float4(float x, float y, float z)
@@ -39,36 +76,36 @@ namespace RayTracer.Math
             this.x = x;
             this.y = y;
             this.z = z;
-            _w = 0;
+            w = 0;
         }
 
-        public Float4(float x, float y, float z, byte w)
+        public Float4(float x, float y, float z, float w)
         {
             this.x = x;
             this.y = y;
             this.z = z;
-            this._w = w;
+            this.w = w;
         }
 
         public bool IsPoint()
-            => _w >= 1;
+            => w >= 1;
         public bool IsVector()
-            => _w <= 0;
+            => w <= 0;
 
         public Float4 AsVector()
         {
-            _w = 0;
+            w = 0;
             return this;
         }
 
         public Float4 AsPoint()
         {
-            _w = 1;
+            w = 1;
             return this;
         }
 
         public static float Dot(Float4 a, Float4 b)
-            => (a.x * b.x) + (a.y * b.y) + (a.z * b.z) + (a._w * b._w);
+            => (a.x * b.x) + (a.y * b.y) + (a.z * b.z) + (a.w * b.w);
 
         public static Float4 Cross(Float4 a, Float4 b)
             => new Float4((a.y * b.z - a.z * b.y),
@@ -92,7 +129,7 @@ namespace RayTracer.Math
             return (SysMath.Abs(vector.x - comp.x)) <= kEpsilon &&
                            (SysMath.Abs(vector.y - comp.y)) <= kEpsilon &&
                            (SysMath.Abs(vector.z - comp.z)) <= kEpsilon &&
-                           (SysMath.Abs(vector._w - comp._w) <= kEpsilon);
+                           (SysMath.Abs(vector.w - comp.w) <= kEpsilon);
         }
 
         public static bool operator !=(Float4 vector, Float4 comp)
@@ -103,7 +140,7 @@ namespace RayTracer.Math
             vector.x += other.x;
             vector.y += other.y;
             vector.z += other.z;
-            vector._w += other._w;
+            vector.w += other.w;
             return vector;
         }
 
@@ -112,7 +149,7 @@ namespace RayTracer.Math
             vector.x -= other.x;
             vector.y -= other.y;
             vector.z -= other.z;
-            vector._w -= other._w;
+            vector.w -= other.w;
             //vector._w = Math.Max(vector._w, other._w) - Math.Min(vector._w, other._w);
             return vector;
         }
@@ -122,7 +159,7 @@ namespace RayTracer.Math
             vector.x /= other.x;
             vector.y /= other.y;
             vector.z /= other.z;
-            vector._w /= other._w;
+            vector.w /= other.w;
             return vector;
         }
 
@@ -131,7 +168,7 @@ namespace RayTracer.Math
             vector.x *= other.x;
             vector.y *= other.y;
             vector.z *= other.z;
-            vector._w *= other._w;
+            vector.w *= other.w;
             return vector;
         }
 
@@ -140,7 +177,7 @@ namespace RayTracer.Math
             vector.x *= scalar;
             vector.y *= scalar;
             vector.z *= scalar;
-            vector._w *= scalar;
+            vector.w *= scalar;
             return vector;
         }
 
@@ -149,7 +186,7 @@ namespace RayTracer.Math
             vector.x /= divider;
             vector.y /= divider;
             vector.z /= divider;
-            vector._w /= divider;
+            vector.w /= divider;
             return vector;
         }
 
@@ -170,9 +207,9 @@ namespace RayTracer.Math
         }
 
         public override int GetHashCode()
-            => x.GetHashCode() ^ y.GetHashCode() ^ z.GetHashCode() ^ _w.GetHashCode();
+            => x.GetHashCode() ^ y.GetHashCode() ^ z.GetHashCode() ^ w.GetHashCode();
 
         public override string ToString()
-            => $"[{x}, {y}, {z}, {_w}]";
+            => $"[{x}, {y}, {z}, {w}]";
     }
 }

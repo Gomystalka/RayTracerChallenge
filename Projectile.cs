@@ -1,4 +1,4 @@
-﻿using RayTracer.Math;
+﻿using RayTracer.Maths;
 using RayTracer.UnitTesting;
 using RayTracer.Debugging;
 

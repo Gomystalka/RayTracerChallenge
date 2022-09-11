@@ -1,10 +1,11 @@
 ﻿using System;
 using RayTracer.UnitTesting;
-using RayTracer.Math;
+using RayTracer.Maths;
 using System.Threading;
 
 using RayTracer.Sandbox;
 using RayTracer.Debugging;
+using BenchmarkDotNet.Running;
 
 namespace RayTracer.Core
 {//Finished off at Cross Product
@@ -13,6 +14,7 @@ namespace RayTracer.Core
         public static void Main(string[] args)
         {
             TestRunner.Run<UnitTesting.Tests.Tests>(false);
+            //BenchmarkRunner.Run<UnitTesting.Tests.Tests>();
         }
     }
 }

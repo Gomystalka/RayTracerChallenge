@@ -1,10 +1,11 @@
 ﻿using System.Threading;
-using RayTracer.Math;
+using RayTracer.Maths;
 using RayTracer.Sandbox;
 using RayTracer.Debugging;
 using RayTracer.Drawing;
 using RayTracer.IO;
 using System;
+using BenchmarkDotNet;
 
 using SysMath = System.Math;
 using RayTracer.Utility;
@@ -166,7 +167,7 @@ namespace RayTracer.UnitTesting.Tests
             return ppm == expected && ppm.EndsWith(nl);
         }
 
-        [UnitTest]
+        [UnitTest(Skip = true)]
         public static bool TestProjectileDrawing() {
             Canvas c = new Canvas(800, 600);
             Projectile proj = new Projectile()
@@ -235,6 +236,325 @@ namespace RayTracer.UnitTesting.Tests
             }
             Debug.Log("Projectile Landed");
             return true;
+        }
+
+        [UnitTest]
+        public static bool TestMatrixCreation() {
+            Matrix matrix = new Matrix() {
+                { 1f, 2f, 3f, 4f},
+                { 5.5f, 6.5f, 7.5f, 8.5f},
+                { 9f, 10f, 11f, 12f},
+                { 13.5f, 14.5f, 15.5f, 16.5f}
+            };
+
+            return matrix[0,0] == 1f &&
+                matrix[0, 3] == 4f &&
+                matrix[1, 0] == 5.5f &&
+                matrix[1, 2] == 7.5f &&
+                matrix[2, 2] == 11f &&
+                matrix[3, 0] == 13.5f &&
+                matrix[3, 2] == 15.5f;
+        }
+
+        [UnitTest]
+        public static bool TestCustomMatrixCreation()
+        {
+            Matrix matrix2x2 = new Matrix() {
+                { -3f, 5f},
+                { 1f, -2f},
+            };
+            //Debug.Log(matrix2x2);
+
+            Matrix matrix3x3 = new Matrix() {
+                { -3f, 5f, 0f},
+                { 1f, -2f, -7f},
+                {0f, 1f, 1f}
+            };
+            //Debug.Log(matrix3x3);
+
+            return matrix2x2[0, 0] == -3f &&
+                matrix2x2[0, 1] == 5f &&
+                matrix2x2[1, 0] == 1f &&
+                matrix2x2[1, 1] == -2f &&
+                matrix3x3[0, 0] == -3f &&
+                matrix3x3[1, 1] == -2f &&
+                matrix3x3[2, 2] == 1f;
+        }
+
+        [UnitTest]
+        public static bool TestMatrixComparisonEqual() {
+            Matrix m = new Matrix() {
+                { 1, 2, 3, 4},
+                { 5, 6, 7, 8},
+                { 9, 10, 11, 12},
+                { 13, 14, 15, 16}
+            };
+
+            Matrix m2 = new Matrix() {
+                { 1, 2, 3, 4},
+                { 5, 6, 7, 8},
+                { 9, 10, 11, 12},
+                { 13, 14, 15, 16}
+            };
+
+            return m == m2;
+        }
+
+        [UnitTest]
+        public static bool TestMatrixComparisonNotEqual()
+        {
+            Matrix m = new Matrix() {
+                { 1, 2, 3, 4},
+                { 5, 6, 7, 8},
+                { 9, 8, 7, 6},
+                { 5, 4, 3, 2}
+            };
+
+            Matrix m2 = new Matrix() {
+                { 2, 3, 4, 5},
+                { 6, 7, 8, 9},
+                { 8, 7, 6, 5},
+                { 4, 3, 2, 1}
+            };
+
+            return m != m2;
+        }
+
+        [UnitTest]
+        public static bool TestMatrixXMatrixMultiplication() {
+            Matrix m = new Matrix() {
+                { 1, 2, 3, 4},
+                { 5, 6, 7, 8},
+                { 9, 8, 7, 6},
+                { 5, 4, 3, 2}
+            };
+
+            Matrix mult = new Matrix() {
+                { -2, 1, 2, 3},
+                { 3, 2, 1, -1},
+                { 4, 3, 6, 5},
+                { 1, 2, 7, 8}
+            };
+
+            Matrix multResult = new Matrix() {
+                { 20, 22, 50, 48},
+                { 44, 54, 114, 108},
+                { 40, 58, 110, 102},
+                { 16, 26, 46, 42}
+            };
+
+            return m * mult == multResult;
+        }
+
+        [UnitTest]
+        public static bool TestMatrixXFloat4Multiplication()
+        {
+            Matrix m = new Matrix() {
+                { 1, 2, 3, 4},
+                { 2, 4, 4, 2},
+                { 8, 6, 4, 1},
+                { 0, 0, 0, 1}
+            };
+            Float4 f = new Float4(1, 2, 3, 1);
+            return f * m == new Float4(18, 24, 33, 1);
+        }
+
+        [UnitTest]
+        public static bool TestIdentityMatrixMultiplication()
+        {
+            Matrix m = new Matrix() {
+                { 1, 2, 3, 4},
+                { 2, 4, 4, 2},
+                { 8, 6, 4, 1},
+                { 0, 0, 0, 1}
+            };
+            return m * Matrix.identity == m;
+        }
+
+        [UnitTest]
+        public static bool TestMatrixTranspose() {
+            Matrix m = new Matrix() {
+                { 0, 9, 3, 0},
+                { 9, 8, 0, 8},
+                { 1, 8, 5, 3},
+                { 0, 0, 5, 8}
+            };
+
+            Matrix expected = new Matrix() {
+                { 0, 9, 1, 0},
+                { 9, 8, 8, 0},
+                { 3, 0, 5, 5},
+                { 0, 8, 3, 8}
+            };
+
+            return m.Transpose() == expected;
+        }
+
+        [UnitTest]
+        public static bool TestIdentityMatrixTranspose()
+        {
+
+            return Matrix.identity.Transpose() == Matrix.identity;
+        }
+
+        [UnitTest]
+        public static bool TestMatrix2x2Determinant() {
+            Matrix m = new Matrix(2, 2);
+            m[0, 0] = 1;
+            m[1, 0] = -3;
+            m[0, 1] = 5;
+            m[1, 1] = 2;
+
+            return m.CalculateDeterminant() == 17;
+        }
+
+        [UnitTest]
+        public static bool TestSubMatrix()
+        {
+            Matrix m3x3 = new Matrix() {
+                { 1, 5, 0},
+                { -3, 2, 7},
+                { 0, 6, -3}
+            };
+            Matrix m4x4 = new Matrix() {
+                { -6, 1, 1, 6},
+                { -8, 5, 8, 6},
+                { -1, 0, 8, 2},
+                { -7, 1, -1, 1}
+            };
+
+            Matrix m3x3sub = new Matrix()
+            {
+                { -3, 2},
+                { 0, 6}
+            };
+
+            Matrix m4x4sub = new Matrix()
+            {
+                { -6, 1, 6},
+                { -8, 8, 6},
+                { -7, -1, 1}
+            };
+
+            return m3x3.GetSubMatrix(0, 2) == m3x3sub && m4x4.GetSubMatrix(2, 1) == m4x4sub;
+            //return m3x3;
+        }
+
+        [UnitTest]
+        public static bool TestMatrix3x3Minor() {
+            Matrix m = new Matrix()
+            {
+                { 3, 5, 0},
+                { 2, -1, 7},
+                { 6, -1, 5}
+            };
+            return m.CalculateMinor(1, 0) == 25;
+        }
+
+        [UnitTest]
+        public static bool TestMatrix3x3Cofactor() {
+            Matrix m = new Matrix()
+            {
+                { 3, 5, 0},
+                { 2, -1, -7},
+                { 6, -1, 5}
+            };
+            return m.CalculateMinor(0, 0) == -12 &&
+                m.CalculateCofactor(0, 0) == -12 &&
+                m.CalculateMinor(1, 0) == 25 &&
+                m.CalculateCofactor(1, 0) == -25;
+        }
+
+        [UnitTest]
+        public static bool TestMatrix3x3Determinant()
+        {
+            Matrix m3x3 = new Matrix() {
+                { 1, 2, 6},
+                { -5, 8, -4},
+                { 2, 6, 4},
+            };
+
+            return m3x3.CalculateCofactor(0, 0) == 56 &&
+                m3x3.CalculateCofactor(0, 1) == 12 &&
+                m3x3.CalculateCofactor(0, 2) == -46 &&
+                m3x3.CalculateDeterminant() == -196;
+        }
+
+        [UnitTest]
+        public static bool TestMatrix4x4Determinant()
+        {
+            Matrix m4x4 = new Matrix() {
+                { -2, -8, 3, 5},
+                { -3, 1, 7, 3},
+                { 1, 2, -9, 6},
+                { -6, 7, 7, -9}
+            };
+
+            return m4x4.CalculateCofactor(0, 0) == 690 &&
+                m4x4.CalculateCofactor(0, 1) == 447 &&
+                m4x4.CalculateCofactor(0, 2) == 210 &&
+                m4x4.CalculateCofactor(0, 3) == 51 &&
+                m4x4.CalculateDeterminant() == -4071;
+        }
+
+        [UnitTest]
+        public static bool TestMatrixInvertibility() {
+            Matrix m = new Matrix() {
+                { 6, 4, 4, 4},
+                { 5, 5, 7, 6},
+                { 4, -9, 3, -7},
+                { 9, 1, 7, -6}
+            };
+
+            Matrix mx = new Matrix() {
+                { -4, 2, -2, -3},
+                { 9, 6, 2, 6},
+                { 0, -5, 1, -5},
+                { 0, 0, 0, 0}
+            };
+
+            return m.Invertible && !mx.Invertible;
+        }
+
+        [UnitTest]
+        public static bool TestMatrix4x4Inverse() {
+            Matrix m = new Matrix() {
+                { -5, 2, 6, -8},
+                { 1, -5, 1, 8},
+                { 7, 7, -6, -7},
+                { 1, -3, 7, 4}
+            };
+
+            Matrix expectedInverse = new Matrix() {
+                { 0.21805f, 0.45113f, 0.24060f, -0.04511f},
+                { -0.80827f, -1.45677f, -0.44361f, 0.52068f},
+                { -0.07895f, -0.22368f, -0.05263f, 0.19737f},
+                { -0.52256f, -0.81391f, -0.30075f, 0.30639f}
+            };
+
+            return m.Inverse == expectedInverse;
+        }
+
+        [UnitTest]
+        public static bool TestMatrix4x4InverseApplication()
+        {
+            Matrix m = new Matrix() {
+                { 3, -9, 7, 3},
+                { 3, -8, 2, -9},
+                { -4, 4, 4, 1},
+                { -6, 5, -1, 1}
+            };
+
+            Matrix mx = new Matrix() {
+                { 8, 2, 2, 2},
+                { 3, -1, 7, 0},
+                { 7, 0, 5, 4},
+                { 6, -2, 0, 5}
+            };
+
+            Matrix mm = m * mx;
+
+            return mm * mx.Inverse == m;
         }
     }
 }

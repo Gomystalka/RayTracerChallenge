@@ -1,4 +1,4 @@
-﻿using RayTracer.Math;
+﻿using RayTracer.Maths;
 
 namespace RayTracer.Sandbox
 {

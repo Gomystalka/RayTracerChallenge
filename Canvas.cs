@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
-using RayTracer.Math;
+using RayTracer.Maths;
 using RayTracer.Utility;
 using SysMath = System.Math;
 
@@ -206,7 +206,7 @@ namespace RayTracer.Drawing
         /// <param name="h">The <b>Hue</b> value. [Range 0 - 360]</param>
         /// <param name="s">The <b>Saturation</b> value. [Range 0 - 1]</param>
         /// <param name="v">The <b>Value</b>. [Range 0 - 1]</param>
-        /// <returns></returns>
+        /// <returns><b>Color</b> struct created from the specified HSV values</returns>
         public static Color FromHSV(float h, float s, float v)
         {
             float r = 0, g = 0, b = 0;
