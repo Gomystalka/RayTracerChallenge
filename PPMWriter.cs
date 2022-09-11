@@ -8,13 +8,29 @@ using SysMath = System.Math;
 
 namespace RayTracer.IO
 {
-    //TO-DO PPM Writer
+    /// <summary>
+    /// A class used for writing .PPM files from pixel data.
+    /// </summary>
     public class PPMWriter
     {
+        /// <summary>
+        /// The flavour of PPM to use.
+        /// </summary>
         public const string kPPMStandard = "P3";
+        /// <summary>
+        /// The maximum allowed characters per line.
+        /// </summary>
         public const byte kMaxCharactersPerLine = 70;
+        /// <summary>
+        /// The maximum color components allowed per line.
+        /// </summary>
         public const byte kMaxComponentsPerLine = kMaxCharactersPerLine / (Color.kComponentCount + 1); //Assuming each component is 3 characters + new line. 
 
+        /// <summary>
+        /// Generates a valid PPM string with prettified formatiing.
+        /// </summary>
+        /// <param name="pixels">The pixel data to be written.</param>
+        /// <returns>String containing the formatted .PPM string.</returns>
         public static string CreatePPMString(Color[,] pixels) { //TO-DO make this a ref
             StringBuilder ppmBuilder = new StringBuilder();
             int width = pixels.GetLength(0);
@@ -50,6 +66,12 @@ namespace RayTracer.IO
             return ppmBuilder.ToString();
         }
 
+        /// <summary>
+        /// Generates the header of the PPM file given the width and height.
+        /// </summary>
+        /// <param name="width">The width of the image.</param>
+        /// <param name="height">The height of the image.</param>
+        /// <returns>A string containing a correctly formatted PPM header.</returns>
         public static string CreatePPMHeader(int width, int height) {
             if (width <= 0 || height <= 0) {
                 Debug.LogError($"[{nameof(PPMWriter)}] Width and Height must be greater than 0!");

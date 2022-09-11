@@ -4,10 +4,20 @@ using System.Text;
 
 using SysMath = System.Math;
 
+/// <summary>
+/// To-Do
+///     -Complete summaries
+/// </summary>
 namespace RayTracer.Maths
 {
+    /// <summary>
+    /// Generic tuple type for vector mathematics.
+    /// </summary>
     public struct Float4
     {
+        /// <summary>
+        /// The 
+        /// </summary>
         public const float kEpsilon = 0.00001f;
         public static Float4 Zero = new Float4(0, 0, 0, 0);
 
@@ -52,7 +62,13 @@ namespace RayTracer.Maths
             }
         }
 
+        /// <summary>
+        /// Returns the magnitude of the vector.
+        /// </summary>
         public float Magnitude => MathF.Sqrt((x * x) + (y * y) + (z * z) + (w * w));
+        /// <summary>
+        /// Returns a normalised version of the vector.
+        /// </summary>
         public Float4 Normalised
         {
             get

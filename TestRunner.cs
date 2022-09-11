@@ -92,6 +92,9 @@ namespace RayTracer.UnitTesting
         }
     }
 
+    /// <summary>
+    /// Attribute used to mark methods for Unit Testing.
+    /// </summary>
     [AttributeUsage(AttributeTargets.Method, AllowMultiple = false, Inherited = true)]
     public class UnitTestAttribute : Attribute {
         /// <summary>
@@ -111,7 +114,7 @@ namespace RayTracer.UnitTesting
     //public class UnitTestClassAttribute : Attribute { }
 
     /// <summary>
-    /// Generic exception
+    /// Generic unit test exception
     /// </summary>
     class UnitTestException : Exception {
         public UnitTestException(string message) : base(message) { }

@@ -47,6 +47,9 @@ namespace RayTracer.Drawing
         }
     }
 
+    /// <summary>
+    /// Type used for color creation and manipulation.
+    /// </summary>
     public struct Color : IEnumerable<float> {
         public const byte kComponentCount = 3;
         public static Color Black => new Color(0f, 0f, 0f);

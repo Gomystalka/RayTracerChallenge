@@ -9,6 +9,9 @@ using Utils = RayTracer.Utility.Utilities;
 
 namespace RayTracer.Maths
 {
+    /// <summary>
+    /// A standard transformation matrix with customisable size.
+    /// </summary>
     public class Matrix : IEnumerable
     {
         public readonly static Matrix identity = new Matrix(4, 4) {
@@ -28,7 +31,7 @@ namespace RayTracer.Maths
         public Matrix Inverse { //Should cache this.
             get {
                 float determinant = CalculateDeterminant();
-                if (determinant == 0) return null;
+                if (determinant == 0) return this;
 
                 Matrix inverse = new Matrix(Dimensions, ElementsPerDimension);
                 for (int x = 0; x < Dimensions; x++) {
@@ -121,6 +124,67 @@ namespace RayTracer.Maths
                 return minor;
         }
 
+        public static Matrix Translation(float x, float y, float z)
+        {
+            //return new Matrix() //Cool initialisation but slow as it relies on 4 Add() calls which Resize the internal array.
+            //{
+            //    { 1, 0, 0, x},
+            //    { 0, 1, 0, y},
+            //    { 0, 0, 1, z},
+            //    { 0, 0, 0, 1}
+            //}; 
+
+            return new Matrix(4, 4)
+            {
+                _internalArray = new float[,] {
+                    { 1, 0, 0, x},
+                    { 0, 1, 0, y},
+                    { 0, 0, 1, z},
+                    { 0, 0, 0, 1}
+                }
+            };
+        }
+
+        public static Matrix Scale(float x, float y, float z) {
+            return new Matrix(4, 4)
+            {
+                _internalArray = new float[,] {
+                    { x, 0, 0, 0},
+                    { 0, y, 0, 0},
+                    { 0, 0, z, 0},
+                    { 0, 0, 0, 1}
+                }
+            };
+        }
+
+        public static Matrix RotateX(float radians) {
+            float sin = MathF.Sin(radians);
+            float cos = MathF.Cos(radians);
+            return new Matrix(4, 4)
+            {
+                _internalArray = new float[,] {
+                    { 1, 0, 0, 0},
+                    { 0, cos, -sin, 0},
+                    { 0, sin, cos, 0},
+                    { 0, 0, 0, 1}
+                }
+            };
+        }
+
+        public static Matrix RotateY(float radians) {
+            float sin = MathF.Sin(radians);
+            float cos = MathF.Cos(radians);
+            return new Matrix(4, 4)
+            {
+                _internalArray = new float[,] {
+                    { cos, 0, sin, 0},
+                    { 0, 1, 0, 0},
+                    { -sin, 0, cos, 0},
+                    { 0, 0, 0, 1}
+                }
+            };
+        }
+
         public static bool operator ==(Matrix matrix, Matrix comp){
             if (matrix.Dimensions != comp.Dimensions || matrix.ElementsPerDimension != comp.ElementsPerDimension)
                 return false;
@@ -161,6 +225,7 @@ namespace RayTracer.Maths
             //    m[2, 1] = matrix[2, 0] * mult[0, 1] + matrix[2, 1] * mult[1, 1] + matrix[2, 2] * mult[2, 1] + matrix[2, 3] * mult[3, 1];
             //    m[2, 2] = matrix[2, 0] * mult[0, 2] + matrix[2, 1] * mult[1, 2] + matrix[2, 2] * mult[2, 2] + matrix[2, 3] * mult[3, 2];
             //    m[2, 3] = matrix[2, 0] * mult[0, 3] + matrix[2, 1] * mult[1, 3] + matrix[2, 2] * mult[2, 3] + matrix[2, 3] * mult[3, 3];
+
             //    m[3, 0] = matrix[3, 0] * mult[0, 0] + matrix[3, 1] * mult[1, 0] + matrix[3, 2] * mult[2, 0] + matrix[3, 3] * mult[3, 0];
             //    m[3, 1] = matrix[3, 0] * mult[0, 1] + matrix[3, 1] * mult[1, 1] + matrix[3, 2] * mult[2, 1] + matrix[3, 3] * mult[3, 1];
             //    m[3, 2] = matrix[3, 0] * mult[0, 2] + matrix[3, 1] * mult[1, 2] + matrix[3, 2] * mult[2, 2] + matrix[3, 3] * mult[3, 2];
@@ -201,17 +266,19 @@ namespace RayTracer.Maths
         public static Float4 operator *(Matrix matrix, Float4 float4)
             => float4 * matrix;
 
+        #region Inherited Methods
         public IEnumerator GetEnumerator()
             => _internalArray.GetEnumerator();
 
         IEnumerator IEnumerable.GetEnumerator()
             => GetEnumerator();
 
+        //Hacky way of initialising matrices like multidimensional arrays. This is REALLY bad so it's only used for initialising test matrices.
         /// <summary>
         /// Adds a new dimension to the Matrix. This function should not be called!
         /// </summary>
         /// <param name="values">Row of valuues to add to the Matrix</param>
-        internal void Add(params float[] values) { //Hacky way of initialising matrices like multidimensional arrays
+        internal void Add(params float[] values) { 
             Dimensions++;
             if (ElementsPerDimension == 0)
                 ElementsPerDimension = values.Length;
@@ -252,5 +319,6 @@ namespace RayTracer.Maths
 
         public override int GetHashCode()
             => _internalArray.GetHashCode() ^ Dimensions ^ ElementsPerDimension;
+        #endregion
     }
 }
