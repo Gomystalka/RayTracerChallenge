@@ -185,6 +185,33 @@ namespace RayTracer.Maths
             };
         }
 
+        public static Matrix RotateZ(float radians)
+        {
+            float sin = MathF.Sin(radians);
+            float cos = MathF.Cos(radians);
+            return new Matrix(4, 4)
+            {
+                _internalArray = new float[,] {
+                    { cos, -sin, 0, 0},
+                    { sin, cos, 0, 0},
+                    { 0, 0, 1, 0},
+                    { 0, 0, 0, 1}
+                }
+            };
+        }
+
+        public static Matrix Shear(float xy, float xz, float yx, float yz, float zx, float zy) {
+            return new Matrix(4, 4)
+            {
+                _internalArray = new float[,] {
+                    { 1, xy, xz, 0},
+                    { yx, 1, yz, 0},
+                    { zx,zy, 1, 0},
+                    { 0, 0, 0, 1}
+                }
+            };
+        }
+
         public static bool operator ==(Matrix matrix, Matrix comp){
             if (matrix.Dimensions != comp.Dimensions || matrix.ElementsPerDimension != comp.ElementsPerDimension)
                 return false;

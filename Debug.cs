@@ -4,6 +4,10 @@ using System.Text;
 
 namespace RayTracer.Debugging
 {
+    /// <summary>
+    /// Wrapper class for C# Console with additional logging capabilities.\n
+    /// The C# console is <b>NOT</b> thread-safe so be careful when calling these methods.
+    /// </summary>
     public static class Debug
     {
         public static void Log(string message)

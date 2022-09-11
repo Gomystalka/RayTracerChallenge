@@ -635,5 +635,27 @@ namespace RayTracer.UnitTesting.Tests
 
             return hq * p == Float4.Point(0, MathF.Sqrt(2f) / 2f, -MathF.Sqrt(2f) / 2f);
         }
+
+        [UnitTest]
+        public static bool TestRotationMatrixY()
+        {
+            Float4 p = Float4.Point(0f, 0f, 1f);
+            Matrix hq = Matrix.RotateY(MathF.PI / 4f);
+            Matrix fq = Matrix.RotateY(MathF.PI / 2f);
+
+            return hq * p == Float4.Point(MathF.Sqrt(2f) / 2f, 0f, MathF.Sqrt(2f) / 2f) &&
+                fq * p == Float4.Point(1f, 0f, 0f);
+        }
+
+        [UnitTest]
+        public static bool TestRotationMatrixZ()
+        {
+            Float4 p = Float4.Point(0f, 1f, 0f);
+            Matrix hq = Matrix.RotateZ(MathF.PI / 4f);
+            Matrix fq = Matrix.RotateZ(MathF.PI / 2f);
+
+            return hq * p == Float4.Point(-MathF.Sqrt(2f) / 2f, MathF.Sqrt(2f) / 2f, 0f) &&
+                fq * p == Float4.Point(-1f, 0f, 0f);
+        }
     }
 }
