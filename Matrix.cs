@@ -145,7 +145,10 @@ namespace RayTracer.Maths
             };
         }
 
-        public static Matrix Scale(float x, float y, float z) {
+        public Matrix Translate(float x, float y, float z)
+            => Translation(x, y, z) * this;
+
+        public static Matrix Scaled(float x, float y, float z) {
             return new Matrix(4, 4)
             {
                 _internalArray = new float[,] {
@@ -157,7 +160,10 @@ namespace RayTracer.Maths
             };
         }
 
-        public static Matrix RotateX(float radians) {
+        public Matrix Scale(float x, float y, float z)
+            => Scaled(x, y, z) * this;
+
+        public static Matrix RotationX(float radians) {
             float sin = MathF.Sin(radians);
             float cos = MathF.Cos(radians);
             return new Matrix(4, 4)
@@ -171,7 +177,10 @@ namespace RayTracer.Maths
             };
         }
 
-        public static Matrix RotateY(float radians) {
+        public Matrix RotateX(float radians)
+            => RotationX(radians) * this;
+
+        public static Matrix RotationY(float radians) {
             float sin = MathF.Sin(radians);
             float cos = MathF.Cos(radians);
             return new Matrix(4, 4)
@@ -185,7 +194,10 @@ namespace RayTracer.Maths
             };
         }
 
-        public static Matrix RotateZ(float radians)
+        public Matrix RotateY(float radians)
+            => RotationY(radians) * this;
+
+        public static Matrix RotationZ(float radians)
         {
             float sin = MathF.Sin(radians);
             float cos = MathF.Cos(radians);
@@ -200,7 +212,11 @@ namespace RayTracer.Maths
             };
         }
 
-        public static Matrix Shear(float xy, float xz, float yx, float yz, float zx, float zy) {
+        public Matrix RotateZ(float radians)
+            => RotationZ(radians) * this;
+
+        //Sheared? Shorn? Who knows... English is 難しい
+        public static Matrix Sheared(float xy, float xz, float yx, float yz, float zx, float zy) {
             return new Matrix(4, 4)
             {
                 _internalArray = new float[,] {
@@ -210,6 +226,17 @@ namespace RayTracer.Maths
                     { 0, 0, 0, 1}
                 }
             };
+        }
+
+        public Matrix Shear(float xy, float xz, float yx, float yz, float zx, float zy)
+            => Sheared(xy, xz, yx, yz, zx, zy) * this;
+
+        public static Matrix TRS(Float4 translation, Float4 rotation, Float4 scale) {
+            Matrix t = Translation(translation.x, translation.y, translation.z);
+            Matrix r = RotationZ(rotation.z) * RotationY(rotation.y) * RotationX(rotation.x);
+            Matrix s = Scaled(scale.x, scale.y, scale.z);
+
+            return s * r * t;
         }
 
         public static bool operator ==(Matrix matrix, Matrix comp){

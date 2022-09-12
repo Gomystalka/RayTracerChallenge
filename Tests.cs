@@ -587,7 +587,7 @@ namespace RayTracer.UnitTesting.Tests
 
         [UnitTest]
         public static bool TestScaleMatrix() {
-            Matrix scaleMatrix = Matrix.Scale(2, 3, 4);
+            Matrix scaleMatrix = Matrix.Scaled(2, 3, 4);
             Float4 p = Float4.Point(-4, 6, 8);
             return scaleMatrix * p == Float4.Point(-8, 18, 32);
         }
@@ -595,7 +595,7 @@ namespace RayTracer.UnitTesting.Tests
         [UnitTest]
         public static bool TestScaleMatrixOnVector()
         {
-            Matrix scaleMatrix = Matrix.Scale(2, 3, 4);
+            Matrix scaleMatrix = Matrix.Scaled(2, 3, 4);
             Float4 v = Float4.Vector(-4, 6, 8);
             return scaleMatrix * v == Float4.Vector(-8, 18, 32);
         }
@@ -603,7 +603,7 @@ namespace RayTracer.UnitTesting.Tests
         [UnitTest]
         public static bool TestInverseScaleMatrix()
         {
-            Matrix scaleMatrix = Matrix.Scale(2, 3, 4);
+            Matrix scaleMatrix = Matrix.Scaled(2, 3, 4);
             scaleMatrix = scaleMatrix.Inverse;
             Float4 v = Float4.Vector(-4, 6, 8);
             return scaleMatrix * v == Float4.Vector(-2, 2, 2);
@@ -611,7 +611,7 @@ namespace RayTracer.UnitTesting.Tests
 
         [UnitTest]
         public static bool TestScaleMatrixReflection() {
-            Matrix scaleMatrix = Matrix.Scale(-1, 1, 1);
+            Matrix scaleMatrix = Matrix.Scaled(-1, 1, 1);
             Float4 p = Float4.Point(2, 3, 4);
             return scaleMatrix * p == Float4.Point(-2, 3, 4);
         }
@@ -619,8 +619,8 @@ namespace RayTracer.UnitTesting.Tests
         [UnitTest]
         public static bool TestRotationMatrixX() {
             Float4 p = Float4.Point(0, 1, 0);
-            Matrix hq = Matrix.RotateX(MathF.PI / 4f);
-            Matrix fq = Matrix.RotateX(MathF.PI / 2f);
+            Matrix hq = Matrix.RotationX(MathF.PI / 4f);
+            Matrix fq = Matrix.RotationX(MathF.PI / 2f);
 
             return hq * p == Float4.Point(0f, MathF.Sqrt(2f) / 2f, MathF.Sqrt(2f) / 2f) &&
                 fq * p == Float4.Point(0f, 0f, 1f);
@@ -630,7 +630,7 @@ namespace RayTracer.UnitTesting.Tests
         public static bool TestRotationMatrixXInverse()
         {
             Float4 p = Float4.Point(0f, 1f, 0f);
-            Matrix hq = Matrix.RotateX(MathF.PI / 4f);
+            Matrix hq = Matrix.RotationX(MathF.PI / 4f);
             hq = hq.Inverse;
 
             return hq * p == Float4.Point(0, MathF.Sqrt(2f) / 2f, -MathF.Sqrt(2f) / 2f);
@@ -640,8 +640,8 @@ namespace RayTracer.UnitTesting.Tests
         public static bool TestRotationMatrixY()
         {
             Float4 p = Float4.Point(0f, 0f, 1f);
-            Matrix hq = Matrix.RotateY(MathF.PI / 4f);
-            Matrix fq = Matrix.RotateY(MathF.PI / 2f);
+            Matrix hq = Matrix.RotationY(MathF.PI / 4f);
+            Matrix fq = Matrix.RotationY(MathF.PI / 2f);
 
             return hq * p == Float4.Point(MathF.Sqrt(2f) / 2f, 0f, MathF.Sqrt(2f) / 2f) &&
                 fq * p == Float4.Point(1f, 0f, 0f);
@@ -651,11 +651,108 @@ namespace RayTracer.UnitTesting.Tests
         public static bool TestRotationMatrixZ()
         {
             Float4 p = Float4.Point(0f, 1f, 0f);
-            Matrix hq = Matrix.RotateZ(MathF.PI / 4f);
-            Matrix fq = Matrix.RotateZ(MathF.PI / 2f);
+            Matrix hq = Matrix.RotationZ(MathF.PI / 4f);
+            Matrix fq = Matrix.RotationZ(MathF.PI / 2f);
 
             return hq * p == Float4.Point(-MathF.Sqrt(2f) / 2f, MathF.Sqrt(2f) / 2f, 0f) &&
                 fq * p == Float4.Point(-1f, 0f, 0f);
+        }
+
+        [UnitTest]
+        public static bool TestMatrixShearXY() {
+            Matrix shear = Matrix.Sheared(1, 0, 0, 0, 0, 0);
+            Float4 p = Float4.Point(2, 3, 4);
+
+            return shear * p == Float4.Point(5, 3, 4);
+        }
+
+        [UnitTest]
+        public static bool TestMatrixShearXZ()
+        {
+            Matrix shear = Matrix.Sheared(0, 1, 0, 0, 0, 0);
+            Float4 p = Float4.Point(2, 3, 4);
+
+            return shear * p == Float4.Point(6, 3, 4);
+        }
+
+        [UnitTest]
+        public static bool TestMatrixShearYX()
+        {
+            Matrix shear = Matrix.Sheared(0, 0, 1, 0, 0, 0);
+            Float4 p = Float4.Point(2, 3, 4);
+
+            return shear * p == Float4.Point(2, 5, 4);
+        }
+
+        [UnitTest]
+        public static bool TestMatrixShearYZ()
+        {
+            Matrix shear = Matrix.Sheared(0, 0, 0, 1, 0, 0);
+            Float4 p = Float4.Point(2, 3, 4);
+
+            return shear * p == Float4.Point(2, 7, 4);
+        }
+
+        [UnitTest]
+        public static bool TestMatrixShearZX()
+        {
+            Matrix shear = Matrix.Sheared(0, 0, 0, 0, 1, 0);
+            Float4 p = Float4.Point(2, 3, 4);
+
+            return shear * p == Float4.Point(2, 3, 6);
+        }
+
+        [UnitTest]
+        public static bool TestMatrixShearZY()
+        {
+            Matrix shear = Matrix.Sheared(0, 0, 0, 0, 0, 1);
+            Float4 p = Float4.Point(2, 3, 4);
+
+            return shear * p == Float4.Point(2, 3, 7);
+        }
+
+        [UnitTest]
+        public static bool TestMatrixTransformationChainInOrder() {
+            Float4 p = Float4.Point(1, 0, 1);
+            Matrix rx = Matrix.RotationX(MathF.PI / 2f);
+            Matrix s = Matrix.Scaled(5f, 5f, 5f);
+            Matrix t = Matrix.Translation(10, 5, 7);
+
+            p *= rx;
+            if (p != Float4.Point(1f, -1f, 0f))
+                return false;
+
+            p *= s;
+            if (p != Float4.Point(5f, -5f, 0f))
+                return false;
+            p *= t;
+            if (p != Float4.Point(15f, 0f, 7f))
+                return false;
+
+            return true;
+        }
+
+        [UnitTest]
+        public static bool TestMatrixTransformationChainReverseOrder() {
+            Float4 p = Float4.Point(1, 0, 1);
+            Matrix rx = Matrix.RotationX(MathF.PI / 2f);
+            Matrix s = Matrix.Scaled(5f, 5f, 5f);
+            Matrix t = Matrix.Translation(10, 5, 7);
+
+            Matrix T = t * s * rx; //Order of operation must be reversed to achieve correct results.
+            Matrix Tordered = rx * s * t;
+            return T * p == Float4.Point(15f, 0f, 7f) 
+                && Tordered * p != Float4.Point(15f, 0f, 7f);
+        }
+
+        [UnitTest]
+        public static bool TestMatrixFluentTransformations() {
+            Float4 p = Float4.Point(1, 0, 1);
+            Matrix m = Matrix.identity
+                .RotateX(MathF.PI / 2f)
+                .Scale(5f, 5f, 5f)
+                .Translate(10f, 5f, 7f);
+            return m * p == Float4.Point(15f, 0f, 7f);
         }
     }
 }
