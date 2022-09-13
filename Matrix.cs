@@ -28,6 +28,12 @@ namespace RayTracer.Maths
         public int ElementsPerDimension { get; set; }
         public bool Invertible => CalculateDeterminant() != 0;
 
+        public int SizeOf {
+            get { 
+                    return (sizeof(float) * (Dimensions * ElementsPerDimension)) + (sizeof(int) * 2);
+            }
+        }
+
         public Matrix Inverse { //Should cache this.
             get {
                 float determinant = CalculateDeterminant();
@@ -68,7 +74,8 @@ namespace RayTracer.Maths
             Dimensions = height;
         }
 
-        public Matrix() {
+        public Matrix()
+        {
             _internalArray = new float[0, 0];
         }
 
@@ -239,6 +246,17 @@ namespace RayTracer.Maths
             return s * r * t;
         }
 
+        //public static Matrix FastTRS(Float4 translation, Float4 rotation, Float4 scale) {
+        //    float sinX = MathF.Sin(rotation.x), cosX = MathF.Cos(rotation.x);
+        //    float sinY = MathF.Sin(rotation.y), cosY = MathF.Cos(rotation.y);
+        //    float sinZ = MathF.Sin(rotation.z), cosZ = MathF.Cos(rotation.z);
+            
+        //    Matrix m = identity;
+        //    m[0, 0] = scale.x;
+        //    m[1, 1] = scale.y;
+        //    m[2, 2] = scale.z;
+        //}
+
         public static bool operator ==(Matrix matrix, Matrix comp){
             if (matrix.Dimensions != comp.Dimensions || matrix.ElementsPerDimension != comp.ElementsPerDimension)
                 return false;
@@ -264,26 +282,26 @@ namespace RayTracer.Maths
 
             //if (matrix._is4x4 && mult._is4x4)
             //{
-            //    m = new Matrix(4, 4);
-            //    m[0, 0] = matrix[0, 0] * mult[0, 0] + matrix[0, 1] * mult[1, 0] + matrix[0, 2] * mult[2, 0] + matrix[0, 3] * mult[3, 0];
-            //    m[0, 1] = matrix[0, 0] * mult[0, 1] + matrix[0, 1] * mult[1, 1] + matrix[0, 2] * mult[2, 1] + matrix[0, 3] * mult[3, 1];
-            //    m[0, 2] = matrix[0, 0] * mult[0, 2] + matrix[0, 1] * mult[1, 2] + matrix[0, 2] * mult[2, 2] + matrix[0, 3] * mult[3, 2];
-            //    m[0, 3] = matrix[0, 0] * mult[0, 3] + matrix[0, 1] * mult[1, 3] + matrix[0, 2] * mult[2, 3] + matrix[0, 3] * mult[3, 3];
+            //m = new Matrix(4, 4);
+            //m[0, 0] = matrix[0, 0] * mult[0, 0] + matrix[0, 1] * mult[1, 0] + matrix[0, 2] * mult[2, 0] + matrix[0, 3] * mult[3, 0];
+            //m[0, 1] = matrix[0, 0] * mult[0, 1] + matrix[0, 1] * mult[1, 1] + matrix[0, 2] * mult[2, 1] + matrix[0, 3] * mult[3, 1];
+            //m[0, 2] = matrix[0, 0] * mult[0, 2] + matrix[0, 1] * mult[1, 2] + matrix[0, 2] * mult[2, 2] + matrix[0, 3] * mult[3, 2];
+            //m[0, 3] = matrix[0, 0] * mult[0, 3] + matrix[0, 1] * mult[1, 3] + matrix[0, 2] * mult[2, 3] + matrix[0, 3] * mult[3, 3];
 
-            //    m[1, 0] = matrix[1, 0] * mult[0, 0] + matrix[1, 1] * mult[1, 0] + matrix[1, 2] * mult[2, 0] + matrix[1, 3] * mult[3, 0];
-            //    m[1, 1] = matrix[1, 0] * mult[0, 1] + matrix[1, 1] * mult[1, 1] + matrix[1, 2] * mult[2, 1] + matrix[1, 3] * mult[3, 1];
-            //    m[1, 2] = matrix[1, 0] * mult[0, 2] + matrix[1, 1] * mult[1, 2] + matrix[1, 2] * mult[2, 2] + matrix[1, 3] * mult[3, 2];
-            //    m[1, 3] = matrix[1, 0] * mult[0, 3] + matrix[1, 1] * mult[1, 3] + matrix[1, 2] * mult[2, 3] + matrix[1, 3] * mult[3, 3];
+            //m[1, 0] = matrix[1, 0] * mult[0, 0] + matrix[1, 1] * mult[1, 0] + matrix[1, 2] * mult[2, 0] + matrix[1, 3] * mult[3, 0];
+            //m[1, 1] = matrix[1, 0] * mult[0, 1] + matrix[1, 1] * mult[1, 1] + matrix[1, 2] * mult[2, 1] + matrix[1, 3] * mult[3, 1];
+            //m[1, 2] = matrix[1, 0] * mult[0, 2] + matrix[1, 1] * mult[1, 2] + matrix[1, 2] * mult[2, 2] + matrix[1, 3] * mult[3, 2];
+            //m[1, 3] = matrix[1, 0] * mult[0, 3] + matrix[1, 1] * mult[1, 3] + matrix[1, 2] * mult[2, 3] + matrix[1, 3] * mult[3, 3];
 
-            //    m[2, 0] = matrix[2, 0] * mult[0, 0] + matrix[2, 1] * mult[1, 0] + matrix[2, 2] * mult[2, 0] + matrix[2, 3] * mult[3, 0];
-            //    m[2, 1] = matrix[2, 0] * mult[0, 1] + matrix[2, 1] * mult[1, 1] + matrix[2, 2] * mult[2, 1] + matrix[2, 3] * mult[3, 1];
-            //    m[2, 2] = matrix[2, 0] * mult[0, 2] + matrix[2, 1] * mult[1, 2] + matrix[2, 2] * mult[2, 2] + matrix[2, 3] * mult[3, 2];
-            //    m[2, 3] = matrix[2, 0] * mult[0, 3] + matrix[2, 1] * mult[1, 3] + matrix[2, 2] * mult[2, 3] + matrix[2, 3] * mult[3, 3];
+            //m[2, 0] = matrix[2, 0] * mult[0, 0] + matrix[2, 1] * mult[1, 0] + matrix[2, 2] * mult[2, 0] + matrix[2, 3] * mult[3, 0];
+            //m[2, 1] = matrix[2, 0] * mult[0, 1] + matrix[2, 1] * mult[1, 1] + matrix[2, 2] * mult[2, 1] + matrix[2, 3] * mult[3, 1];
+            //m[2, 2] = matrix[2, 0] * mult[0, 2] + matrix[2, 1] * mult[1, 2] + matrix[2, 2] * mult[2, 2] + matrix[2, 3] * mult[3, 2];
+            //m[2, 3] = matrix[2, 0] * mult[0, 3] + matrix[2, 1] * mult[1, 3] + matrix[2, 2] * mult[2, 3] + matrix[2, 3] * mult[3, 3];
 
-            //    m[3, 0] = matrix[3, 0] * mult[0, 0] + matrix[3, 1] * mult[1, 0] + matrix[3, 2] * mult[2, 0] + matrix[3, 3] * mult[3, 0];
-            //    m[3, 1] = matrix[3, 0] * mult[0, 1] + matrix[3, 1] * mult[1, 1] + matrix[3, 2] * mult[2, 1] + matrix[3, 3] * mult[3, 1];
-            //    m[3, 2] = matrix[3, 0] * mult[0, 2] + matrix[3, 1] * mult[1, 2] + matrix[3, 2] * mult[2, 2] + matrix[3, 3] * mult[3, 2];
-            //    m[3, 3] = matrix[3, 0] * mult[0, 3] + matrix[3, 1] * mult[1, 3] + matrix[3, 2] * mult[2, 3] + matrix[3, 3] * mult[3, 3];
+            //m[3, 0] = matrix[3, 0] * mult[0, 0] + matrix[3, 1] * mult[1, 0] + matrix[3, 2] * mult[2, 0] + matrix[3, 3] * mult[3, 0];
+            //m[3, 1] = matrix[3, 0] * mult[0, 1] + matrix[3, 1] * mult[1, 1] + matrix[3, 2] * mult[2, 1] + matrix[3, 3] * mult[3, 1];
+            //m[3, 2] = matrix[3, 0] * mult[0, 2] + matrix[3, 1] * mult[1, 2] + matrix[3, 2] * mult[2, 2] + matrix[3, 3] * mult[3, 2];
+            //m[3, 3] = matrix[3, 0] * mult[0, 3] + matrix[3, 1] * mult[1, 3] + matrix[3, 2] * mult[2, 3] + matrix[3, 3] * mult[3, 3];
             //}
             m = new Matrix(matrix.ElementsPerDimension, matrix.Dimensions);
             for (int x = 0; x < matrix.Dimensions; x++)

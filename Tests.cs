@@ -748,11 +748,34 @@ namespace RayTracer.UnitTesting.Tests
         [UnitTest]
         public static bool TestMatrixFluentTransformations() {
             Float4 p = Float4.Point(1, 0, 1);
+            
             Matrix m = Matrix.identity
                 .RotateX(MathF.PI / 2f)
                 .Scale(5f, 5f, 5f)
                 .Translate(10f, 5f, 7f);
+
             return m * p == Float4.Point(15f, 0f, 7f);
+        }
+
+        [UnitTest]
+        public static bool TestClockFaceMatrixCreation() {
+            Float4 p = Float4.Point(0, 0, 1f);
+            float rad = 40f;
+            Matrix ry = Matrix.RotationY(3f * (MathF.PI / 6f));
+
+            Canvas c = new Canvas(100, 100);
+
+            p *= rad;
+
+            c.FillPixel(50, 50, Color.Red);
+            c.FillPixel(((int)p.x + 50), ((int)p.z), Color.Red);
+
+            //c.FillPixel((int)p.x, (int)p.y, Color.Red);
+            string ppm = PPMWriter.CreatePPMString(c.Pixels);
+            System.IO.File.WriteAllText("ClockFace.ppm", ppm);
+
+            Debug.Log(p * ry);
+            return true;
         }
     }
 }
