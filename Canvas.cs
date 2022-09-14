@@ -39,6 +39,9 @@ namespace RayTracer.Drawing
             if (x < Width && y < Height && x >= 0 && y >= 0)
                 Pixels[x, y] = fill;
         }
+        
+        public void FillPixel(float x, float y, Color fill)
+            => FillPixel((int)x, (int)y, fill);
 
         public Color GetPixel(int x, int y) {
             if (x < Width && y < Height)

@@ -760,21 +760,33 @@ namespace RayTracer.UnitTesting.Tests
         [UnitTest]
         public static bool TestClockFaceMatrixCreation() {
             Float4 p = Float4.Point(0, 0, 1f);
-            float rad = 40f;
-            Matrix ry = Matrix.RotationY(3f * (MathF.PI / 6f));
-
+            Matrix t = Matrix.Translation(100, 100, 100);
+            Matrix ry = Matrix.RotationY(MathF.PI / 6f);
             Canvas c = new Canvas(100, 100);
 
-            p *= rad;
+            Matrix s = Matrix.Scaled(1.4f, 1.4f, 1.4f);
 
-            c.FillPixel(50, 50, Color.Red);
-            c.FillPixel(((int)p.x + 50), ((int)p.z), Color.Red);
+            //p *= ry;
+            //p *= 36f;
+
+            for (int i = 0; i < 12; i++)
+            {
+                Matrix r = Matrix.RotationY(i * ((MathF.PI / 6f)));
+                p.x = 0f;
+                p.y = 0f;
+                p.z = 1f;
+                p *= r * s * t;
+                c.FillPixel(p.x * 0.2f, p.z * .2f, Color.Red);
+            }
+
+            c.FillPixel(50f, 50f, Color.Red);
+            //c.FillPixel(p.x, p.z, Color.Red);
 
             //c.FillPixel((int)p.x, (int)p.y, Color.Red);
             string ppm = PPMWriter.CreatePPMString(c.Pixels);
             System.IO.File.WriteAllText("ClockFace.ppm", ppm);
 
-            Debug.Log(p * ry);
+            Debug.Log(p);
             return true;
         }
     }
