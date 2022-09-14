@@ -759,34 +759,50 @@ namespace RayTracer.UnitTesting.Tests
 
         [UnitTest]
         public static bool TestClockFaceMatrixCreation() {
+            float radius = 40f;
+
             Float4 p = Float4.Point(0, 0, 1f);
-            Matrix t = Matrix.Translation(100, 100, 100);
-            Matrix ry = Matrix.RotationY(MathF.PI / 6f);
-            Canvas c = new Canvas(100, 100);
+            Canvas c = new Canvas(99, 99);
+            Matrix s = Matrix.Scaled(radius, radius, radius);
+            Matrix t = Matrix.Translation(49, 49, 49);
 
-            Matrix s = Matrix.Scaled(1.4f, 1.4f, 1.4f);
+            Float4 lastPoint = new Float4();
+            int pointThickness = 2;
 
-            //p *= ry;
-            //p *= 36f;
-
-            for (int i = 0; i < 12; i++)
+            for (int i = 0; i < 13; i++)
             {
                 Matrix r = Matrix.RotationY(i * ((MathF.PI / 6f)));
-                p.x = 0f;
-                p.y = 0f;
-                p.z = 1f;
-                p *= r * s * t;
-                c.FillPixel(p.x * 0.2f, p.z * .2f, Color.Red);
+                p = Float4.Point(0f, 0f, 1f);
+                p *= t * r * s;
+
+
+                if (i != 0)
+                {
+                    Float4 pDir = (lastPoint - p);
+                    float pDist = pDir.Magnitude;
+                    for (int d = 0; d < Math.Abs(pDist); d++)
+                    {
+                        Float4 pp = p + (pDir.Normalised * d);
+                        if(c.GetPixel(((int)pp.x), ((int)pp.z)) == Color.Black)
+                            c.FillPixel(pp.x, pp.z, Color.Yellow);
+                    }
+                }
+
+                for (int dx = -pointThickness; dx < pointThickness; dx++)
+                {
+                    for (int dy = -pointThickness; dy < pointThickness; dy++)
+                    {
+                            c.FillPixel(p.x + dx, p.z + dy, Color.FromHSV((360f / 12f) * i, 1f, 1f));
+                    }
+                }
+
+                lastPoint = Float4.Point(p.x, p.y, p.z);
             }
 
-            c.FillPixel(50f, 50f, Color.Red);
-            //c.FillPixel(p.x, p.z, Color.Red);
+            c.FillPixel(49f, 49f, Color.Red);
 
-            //c.FillPixel((int)p.x, (int)p.y, Color.Red);
             string ppm = PPMWriter.CreatePPMString(c.Pixels);
             System.IO.File.WriteAllText("ClockFace.ppm", ppm);
-
-            Debug.Log(p);
             return true;
         }
     }

@@ -74,7 +74,13 @@ namespace RayTracer.Maths
             get
             {
                 Float4 f = new Float4(this);
-                f /= Magnitude;
+                float mag = f.Magnitude;
+                //f /= Magnitude;
+                f.x /= mag;
+                f.y /= mag;
+                f.z /= mag;
+                f.w /= mag;
+                
                 return f;
             }
         }
@@ -83,7 +89,7 @@ namespace RayTracer.Maths
         { //Copy
             x = f.x;
             y = f.y;
-            z = f.y;
+            z = f.z;
             w = f.w;
         }
 
@@ -117,6 +123,15 @@ namespace RayTracer.Maths
         public Float4 AsPoint()
         {
             w = 1;
+            return this;
+        }
+
+        public Float4 Normalise() {
+            float mag = Magnitude;
+            x /= mag;
+            y /= mag;
+            z /= mag;
+            w /= mag;
             return this;
         }
 
