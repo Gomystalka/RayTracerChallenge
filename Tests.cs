@@ -4,6 +4,7 @@ using RayTracer.Sandbox;
 using RayTracer.Debugging;
 using RayTracer.Drawing;
 using RayTracer.IO;
+using RayTracer.Core;
 using System;
 using BenchmarkDotNet;
 
@@ -804,6 +805,39 @@ namespace RayTracer.UnitTesting.Tests
             string ppm = PPMWriter.CreatePPMString(c.Pixels);
             System.IO.File.WriteAllText("ClockFace.ppm", ppm);
             return true;
+        }
+
+        [UnitTest]
+        public static bool TestRayCreation()
+        {
+            Float4 origin = Float4.Point(1, 2, 3);
+            Float4 dir = Float4.Vector(4, 5, 6);
+
+            Ray ray = new Ray(origin, dir);
+
+            return ray.origin == origin && ray.direction == dir;
+        }        
+        
+        [UnitTest]
+        public static bool TestRayPositionRetrieval()
+        {
+            Float4 origin = Float4.Point(2, 3, 4);
+            Float4 dir = Float4.Vector(1, 0, 0);
+
+            Ray ray = new Ray(origin, dir);
+
+            return ray.GetPositionAtTime(0) == origin &&
+                ray.GetPositionAtTime(1) == Float4.Point(3, 3, 4) &&
+                ray.GetPositionAtTime(-1) == Float4.Point(1, 3, 4) &&
+                ray.GetPositionAtTime(2.5f) == Float4.Point(4.5f, 3, 4);
+        }
+
+        [UnitTest]
+        public static bool TestRaySphereIntersection() {
+            Float4 origin = Float4.Point(0, 0, -5);
+            Float4 dir = Float4.Vector(0, 0, 1);
+
+            Ray ray = new Ray(origin, dir);
         }
     }
 }
