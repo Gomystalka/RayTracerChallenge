@@ -10,6 +10,7 @@ using BenchmarkDotNet;
 
 using SysMath = System.Math;
 using RayTracer.Utility;
+using RayTracer.Geometry.Primitives;
 
 namespace RayTracer.UnitTesting.Tests
 {
@@ -836,8 +837,10 @@ namespace RayTracer.UnitTesting.Tests
         public static bool TestRaySphereIntersection() {
             Float4 origin = Float4.Point(0, 0, -5);
             Float4 dir = Float4.Vector(0, 0, 1);
-
+            Sphere s = new Sphere();
             Ray ray = new Ray(origin, dir);
+            float[] intersections = s.GetIntersections(ray);
+             return intersections[0] == 4f && intersections[1] == 6f;
         }
     }
 }
