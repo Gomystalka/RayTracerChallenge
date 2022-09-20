@@ -164,7 +164,7 @@ namespace RayTracer.UnitTesting.Tests
             string expected = $"{PPMWriter.CreatePPMHeader(c.Width, c.Height)}{nl}" +
                               $"255 0 0 255 0 0 255 0 0 255 0 0 255 0 0 255 0 0{nl}" +
                               $"255 0 0 255 0 0 255 0 0 255 0 0 255 0 0 255 0 0{nl}" +
-                              $"255 0 0 255 0 0 255 0 0 255 0 0 255 0 0 255 0 0{nl}" + 
+                              $"255 0 0 255 0 0 255 0 0 255 0 0 255 0 0 255 0 0{nl}" +
                               $"255 0 0 255 0 0{nl}";
             return ppm == expected && ppm.EndsWith(nl);
         }
@@ -249,7 +249,7 @@ namespace RayTracer.UnitTesting.Tests
                 { 13.5f, 14.5f, 15.5f, 16.5f}
             };
 
-            return matrix[0,0] == 1f &&
+            return matrix[0, 0] == 1f &&
                 matrix[0, 3] == 4f &&
                 matrix[1, 0] == 5.5f &&
                 matrix[1, 2] == 7.5f &&
@@ -743,14 +743,14 @@ namespace RayTracer.UnitTesting.Tests
 
             Matrix T = t * s * rx; //Order of operation must be reversed to achieve correct results.
             Matrix Tordered = rx * s * t;
-            return T * p == Float4.Point(15f, 0f, 7f) 
+            return T * p == Float4.Point(15f, 0f, 7f)
                 && Tordered * p != Float4.Point(15f, 0f, 7f);
         }
 
         [UnitTest]
         public static bool TestMatrixFluentTransformations() {
             Float4 p = Float4.Point(1, 0, 1);
-            
+
             Matrix m = Matrix.identity
                 .RotateX(MathF.PI / 2f)
                 .Scale(5f, 5f, 5f)
@@ -785,7 +785,7 @@ namespace RayTracer.UnitTesting.Tests
                     for (int d = 0; d < Math.Abs(pDist); d++)
                     {
                         Float4 pp = p + (pDir.Normalised * d);
-                        if(c.GetPixel(((int)pp.x), ((int)pp.z)) == Color.Black)
+                        if (c.GetPixel(((int)pp.x), ((int)pp.z)) == Color.Black)
                             c.FillPixel(pp.x, pp.z, Color.Yellow);
                     }
                 }
@@ -794,7 +794,7 @@ namespace RayTracer.UnitTesting.Tests
                 {
                     for (int dy = -pointThickness; dy < pointThickness; dy++)
                     {
-                            c.FillPixel(p.x + dx, p.z + dy, Color.FromHSV((360f / 12f) * i, 1f, 1f));
+                        c.FillPixel(p.x + dx, p.z + dy, Color.FromHSV((360f / 12f) * i, 1f, 1f));
                     }
                 }
 
@@ -817,8 +817,8 @@ namespace RayTracer.UnitTesting.Tests
             Ray ray = new Ray(origin, dir);
 
             return ray.origin == origin && ray.direction == dir;
-        }        
-        
+        }
+
         [UnitTest]
         public static bool TestRayPositionRetrieval()
         {
@@ -833,14 +833,90 @@ namespace RayTracer.UnitTesting.Tests
                 ray.GetPositionAtTime(2.5f) == Float4.Point(4.5f, 3, 4);
         }
 
+        //[UnitTest]
+        //public static bool TestRaySphereIntersection() {
+        //    Float4 origin = Float4.Point(0, 0, -5);
+        //    Float4 dir = Float4.Vector(0, 0, 1);
+        //    Sphere s = new Sphere();
+        //    Ray ray = new Ray(origin, dir);
+        //    float[] intersections = s.GetIntersections(ray);
+        //    return intersections[0] == 4f && intersections[1] == 6f;
+        //}
+
+        //[UnitTest]
+        //public static bool TestRaySphereTangentIntersection() {
+        //    Float4 origin = Float4.Point(0, 1, -5);
+        //    Float4 dir = Float4.Vector(0, 0, 1);
+        //    Sphere s = new Sphere();
+        //    Ray ray = new Ray(origin, dir);
+        //    float[] intersections = s.GetIntersections(ray);
+        //    return intersections[0] == 5f && intersections[1] == 5f;
+        //}
+
+        //[UnitTest]
+        //public static bool TestRayMissOnSphere() {
+        //    Float4 origin = Float4.Point(0, 2, -5);
+        //    Float4 dir = Float4.Vector(0, 0, 1);
+        //    Sphere s = new Sphere();
+        //    Ray ray = new Ray(origin, dir);
+        //    float[] intersections = s.GetIntersections(ray);
+        //    return intersections.Length == 0;
+        //}
+
+        //[UnitTest]
+        //public static bool TestRayOriginInSphere() {
+        //    Float4 origin = Float4.Point(0, 0, 0);
+        //    Float4 dir = Float4.Vector(0, 0, 1);
+        //    Sphere s = new Sphere();
+        //    Ray ray = new Ray(origin, dir);
+        //    float[] intersections = s.GetIntersections(ray);
+        //    return intersections[0] == -1f && intersections[1] == 1f;
+        //}
+
+        //[UnitTest]
+        //public static bool TestRayBehindSphere() {
+        //    Float4 origin = Float4.Point(0, 0, 5);
+        //    Float4 dir = Float4.Vector(0, 0, 1);
+        //    Sphere s = new Sphere();
+        //    Ray ray = new Ray(origin, dir);
+        //    float[] intersections = s.GetIntersections(ray);
+        //    return intersections[0] == -6f && intersections[1] == -4f;
+        //}
+
         [UnitTest]
-        public static bool TestRaySphereIntersection() {
-            Float4 origin = Float4.Point(0, 0, -5);
-            Float4 dir = Float4.Vector(0, 0, 1);
+        public static bool TestRayHitCreation() {
+
             Sphere s = new Sphere();
-            Ray ray = new Ray(origin, dir);
-            float[] intersections = s.GetIntersections(ray);
-             return intersections[0] == 4f && intersections[1] == 6f;
+            RayIntersection hit = new RayIntersection();
+            hit.hitTime = 3.5f;
+            hit.hitObject = s;
+
+            return hit.hitTime == 3.5f && hit.hitObject == s;
+        }
+
+        [UnitTest]
+        public static bool TestRayHitArrayCreation() {
+            RayIntersection a = new RayIntersection();
+            a.hitTime = 1f;
+            RayIntersection b = new RayIntersection();
+            b.hitTime = 2f;
+
+            RayIntersection[] hits = new RayIntersection[2];
+            hits[0] = a;
+            hits[1] = b;
+
+            return hits[0].hitTime == 1f &&
+                hits[1].hitTime == 2f;
+        }
+
+        [UnitTest]
+        public static bool TestRayIntersections() {
+            Ray r = new Ray(Float4.Point(0, 0, -5f), Float4.Vector(0, 0, 1f));
+            Sphere s = new Sphere();
+            RayIntersection[] hits = s.GetIntersections(r);
+
+            return hits[0].hitObject == s &&
+                hits[1].hitObject == s;
         }
     }
 }

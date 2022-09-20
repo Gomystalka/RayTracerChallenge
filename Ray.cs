@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using RayTracer.Geometry.Primitives;
 using RayTracer.Maths;
 
 namespace RayTracer.Core
@@ -17,5 +18,16 @@ namespace RayTracer.Core
 
         public Float4 GetPositionAtTime(float t)
             => origin + (direction * t);
+    }
+
+    public struct RayIntersection {
+        public float hitTime;
+        public Object hitObject;
+
+        public RayIntersection(float time, Object source)
+        {
+            hitTime = time;
+            hitObject = source;
+        }
     }
 }
